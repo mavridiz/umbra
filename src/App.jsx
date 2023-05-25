@@ -18,9 +18,8 @@ function NavigationMobile() {
   const location = useLocation()
   const navigation = [
     { name: 'Homepage', href: '/', icon: HomeIcon, current: location.pathname === '/' },
-    { name: 'Galería', href: '/photos', icon: PhotoIcon, current: location.pathname === '/photos' },
-    { name: 'Filtraciones', href: '/leaks', icon: ExclamationTriangleIcon, current: location.pathname === '/leaks' },
-    { name: 'Basura', href: '/trash', icon: TrashIcon, current: location.pathname === '/trash' },
+    { name: 'Proteger', href: '/photos', icon: PhotoIcon, current: location.pathname === '/photos' },
+    { name: 'Verificar', href: '/leaks', icon: ExclamationTriangleIcon, current: location.pathname === '/leaks' },
   ]
  
 
@@ -57,9 +56,8 @@ function NavigationDesktop() {
   const location = useLocation()
   const navigation = [
     { name: 'Homepage', href: '/', icon: HomeIcon, current: location.pathname === '/' },
-    { name: 'Galería', href: '/photos', icon: PhotoIcon, current: location.pathname === '/photos' },
-    { name: 'Filtraciones', href: '/leaks', icon: ExclamationTriangleIcon, current: location.pathname === '/leaks' },
-    { name: 'Basura', href: '/trash', icon: TrashIcon, current: location.pathname === '/trash' },
+    { name: 'Proteger', href: '/photos', icon: PhotoIcon, current: location.pathname === '/photos' },
+    { name: 'Verificar', href: '/leaks', icon: ExclamationTriangleIcon, current: location.pathname === '/leaks' },
   ]
   
   return (
