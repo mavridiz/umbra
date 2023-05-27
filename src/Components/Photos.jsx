@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { CheckCircleIcon, ArrowUpOnSquareIcon, ExclamationCircleIcon, } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, ArrowUpOnSquareIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { useDropzone } from 'react-dropzone';
 import { Transition } from '@headlessui/react';
+import axios from 'axios';
 
 export default function Photos() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [showNotification, setShowNotification] = useState(false);
   const [invalidFile, setInvalidFile] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const handleDrop = (acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -26,6 +28,24 @@ export default function Photos() {
     } else {
       setShowNotification(true);
       setInvalidFile(true);
+    }
+  };
+
+  const handleFormSubmit = () => {
+    if (uploadedImage && phoneNumber.length === 10) {
+      const base64Image = uploadedImage.split(',')[1];
+      const formData = new FormData();
+      formData.append('base64', base64Image);
+      formData.append('phone_number', phoneNumber);
+      
+
+      axios.post('http://127.0.0.1:8000/api/v1.0/protect-image', formData)
+        .then(response => {
+          console.log(response.data);
+        })
+        .catch(error => {
+          
+        });
     }
   };
 
@@ -74,9 +94,30 @@ export default function Photos() {
             </div>
           </Transition>
 
+          {uploadedImage && (
+            <div className="mt-4">
+              <input
+                type="text"
+                placeholder="Número de teléfono (10 dígitos)"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className="px-2 py-1 border border-gray-300 rounded"
+              />
+            </div>
+          )}
+
+          {uploadedImage && phoneNumber.length === 10 && (
+            <div className="mt-4">
+              <button
+                onClick={handleFormSubmit}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Enviar formulario
+              </button>
+            </div>
+          )}
         </div>
       </main>
-
     </>
   );
 }
