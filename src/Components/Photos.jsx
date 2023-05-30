@@ -9,22 +9,27 @@ export default function Photos() {
   const [showNotification, setShowNotification] = useState(false);
   const [invalidFile, setInvalidFile] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [modifiedImage, setModifiedImage] = useState(null);
 
-  const handleDrop = (acceptedFiles) => {
+  const handleDrop = async (acceptedFiles) => {
     const file = acceptedFiles[0];
     const fileExtension = file.name.split('.').pop().toLowerCase();
     const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
 
     if (allowedExtensions.includes(fileExtension)) {
-      const reader = new FileReader();
+      try {
+        const reader = new FileReader();
 
-      reader.onload = (e) => {
-        setUploadedImage(e.target.result);
-        setShowNotification(true);
-        setInvalidFile(false);
-      };
+        reader.onload = async (e) => {
+          setUploadedImage(e.target.result);
+          setShowNotification(true);
+          setInvalidFile(false);
+        };
 
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       setShowNotification(true);
       setInvalidFile(true);
@@ -37,17 +42,27 @@ export default function Photos() {
       const formData = new FormData();
       formData.append('base64', base64Image);
       formData.append('phone_number', phoneNumber);
-      
 
       axios.post('http://127.0.0.1:8000/api/v1.0/protect-image', formData)
         .then(response => {
-          console.log(response.data);
+          const modifiedImageBase64 = response.data.base64;
+          setModifiedImage(modifiedImageBase64);
         })
         .catch(error => {
-          
+          console.log(error);
         });
     }
   };
+
+const handleDownloadImage = () => {
+  if (modifiedImage) {
+    const downloadLink = document.createElement('a');
+    downloadLink.href = `data:image/png;base64,${modifiedImage}`;
+    downloadLink.download = 'protected_image.png';
+    downloadLink.click();
+  }
+};
+
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop: handleDrop });
 
@@ -116,6 +131,21 @@ export default function Photos() {
               </button>
             </div>
           )}
+
+          {modifiedImage && (
+            <div className="mt-4">
+              <img src={`data:image/png;base64,${modifiedImage}`} alt="" className="max-w-md" />
+              <div className="mt-2">
+                <button
+                  onClick={handleDownloadImage}
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Descargar imagen modificada
+                </button>
+              </div>
+            </div>
+          )}
+
         </div>
       </main>
     </>
